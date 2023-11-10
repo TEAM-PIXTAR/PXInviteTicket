@@ -83,19 +83,6 @@ public class InviteTicketCommand implements CommandExecutor {
                 return;
             }
 
-            OfflinePlayer invitedPlayer = null;
-            for (OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
-                if (offlinePlayer.getName() != null && offlinePlayer.getName().equals(invitedPlayerName)) {
-                    invitedPlayer = offlinePlayer;
-                    break;
-                }
-            }
-
-            if (invitedPlayer == null || invitedPlayer.getName() == null || (!invitedPlayer.hasPlayedBefore() && !invitedPlayer.isOnline())) {
-                player.sendMessage(msgData.getMessage(MessageKey.UNKNOWN_PLAYER));
-                return;
-            }
-
             if (getInvitedUsers(player.getName()).size() >= config.getInt("InviteTicket.InviteLimit")) {
                 player.sendMessage(msgData.getMessage(MessageKey.MAX_INVITES_REACHED));
                 return;
@@ -103,14 +90,14 @@ public class InviteTicketCommand implements CommandExecutor {
 
             if (invitedValid.hasReceivedInvite(invitedPlayerName)) {
                 String message = msgData.getMessage(MessageKey.INVITED_PLAYER);
-                String formattedMessage = message.replace("{player}", invitedPlayer.getName());
+                String formattedMessage = message.replace("{player}", invitedPlayerName);
                 player.sendMessage(formattedMessage);
                 return;
             }
 
-            invitedValid.registerInvite(player.getName(), invitedPlayer.getName());
+            invitedValid.registerInvite(player.getName(), invitedPlayerName);
             String message = msgData.getMessage(MessageKey.SET_INVITE_SUCCESS);
-            String formattedMessage = message.replace("{player}", invitedPlayer.getName());
+            String formattedMessage = message.replace("{player}", invitedPlayerName);
             player.sendMessage(formattedMessage);
         } else {
             player.sendMessage(msgData.getMessage(MessageKey.MISSING_PLAYER));
