@@ -75,6 +75,9 @@ public class InviteTicketCommand implements CommandExecutor {
     }
 
     private void handleRegisterCommand(Player player, String[] args) {
+
+        config = plugin.getConfig();
+
         if (args.length > 1) {
             String invitedPlayerName = args[1];
 
@@ -83,7 +86,7 @@ public class InviteTicketCommand implements CommandExecutor {
                 return;
             }
 
-            if (getInvitedUsers(player.getName()).size() >= config.getInt("InviteTicket.InviteLimit")) {
+            if (getInvitedUsers(player.getName()).size() <= config.getInt("InviteTicket.InviteLimit")) {
                 player.sendMessage(msgData.getMessage(MessageKey.MAX_INVITES_REACHED));
                 return;
             }
