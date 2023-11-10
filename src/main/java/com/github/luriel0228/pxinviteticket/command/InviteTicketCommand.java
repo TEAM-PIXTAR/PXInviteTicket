@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +24,7 @@ public class InviteTicketCommand implements CommandExecutor {
 
     private final JavaPlugin plugin;
     private final InvitedValid invitedValid;
+    private final Message msgData = Message.getInstance();
 
     public InviteTicketCommand(PXInviteTicket plugin, InvitedValid invitedValid) {
         this.plugin = plugin;
@@ -31,7 +33,9 @@ public class InviteTicketCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        Message msgData = Message.getInstance();
+
+        FileConfiguration config = PXInviteTicket.getInstance().getConfig();
+
 
         if (!(sender instanceof Player)) {
             sender.sendMessage(msgData.getMessage(MessageKey.PLAYER_ONLY));
@@ -40,50 +44,70 @@ public class InviteTicketCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
+        if (!config.getBoolean("EnablePlugin")) {
+            player.sendMessage("플러그인이 설정에서 비활성화되었습니다. 활성화하려면 config.yml에서 'pluginEnable: true'로 설정하세요.");
+            return true;
+        }
+
         if (args.length == 0) {
             player.sendMessage(msgData.getMessage(MessageKey.WRONG_COMMAND));
             return true;
         }
 
-        switch (args[0]) {
+        switch (args[0].toLowerCase()) {
             case "리로드":
-                if (!PermissionValid.hasPermission(player, "reload")) return true;
-                plugin.reloadConfig();
-                MessageConfig.reload();
-                player.sendMessage(msgData.getMessage(MessageKey.RELOAD_CONFIG));
+                handleReloadCommand(player);
                 break;
             case "등록":
-                if (args.length > 1) {
-                    String invitedPlayerName = args[1];
-
-                    if (invitedPlayerName.isEmpty()) {
-                        player.sendMessage(msgData.getMessage(MessageKey.MISSING_PLAYER));
-                        return true;
-                    }
-
-                    Player invitedPlayer = Bukkit.getPlayerExact(invitedPlayerName);
-                    if (invitedPlayer == null) {
-                        player.sendMessage(msgData.getMessage(MessageKey.UNKNOWN_PLAYER));
-                        return true;
-                    }
-
-                    invitedValid.registerInvite(player.getName(), invitedPlayer.getName());
-                    String message = msgData.getMessage(MessageKey.SET_INVITE_SUCCESS);
-                    String formattedMessage = message.replace("{player}", invitedPlayer.getName());
-                    player.sendMessage(formattedMessage);
-                } else {
-                    player.sendMessage(msgData.getMessage(MessageKey.MISSING_PLAYER));
-                }
+                handleRegisterCommand(player, args);
                 break;
             case "목록":
-                player.sendMessage(msgData.getMessage(MessageKey.INVITED_PLAYER));
-                List<String> invitedUsers = getInvitedUsers(player.getName());
-                for (String invitedUser : invitedUsers) {
-                    player.sendMessage("- " + invitedUser);
-                }
+                handleListCommand(player);
+                break;
+            default:
+                player.sendMessage(msgData.getMessage(MessageKey.WRONG_COMMAND));
                 break;
         }
+
         return true;
+    }
+
+    private void handleReloadCommand(Player player) {
+        if (PermissionValid.hasPermission(player, "reload")) {
+            plugin.reloadConfig();
+            MessageConfig.reload();
+            player.sendMessage(msgData.getMessage(MessageKey.RELOAD_CONFIG));
+        }
+    }
+
+    private void handleRegisterCommand(Player player, String[] args) {
+        if (args.length > 1) {
+            String invitedPlayerName = args[1];
+
+            if (invitedPlayerName.isEmpty()) {
+                player.sendMessage(msgData.getMessage(MessageKey.MISSING_PLAYER));
+                return;
+            }
+
+            Player invitedPlayer = Bukkit.getPlayerExact(invitedPlayerName);
+            if (invitedPlayer == null) {
+                player.sendMessage(msgData.getMessage(MessageKey.UNKNOWN_PLAYER));
+                return;
+            }
+
+            invitedValid.registerInvite(player.getName(), invitedPlayer.getName());
+            String message = msgData.getMessage(MessageKey.SET_INVITE_SUCCESS);
+            String formattedMessage = message.replace("{player}", invitedPlayer.getName());
+            player.sendMessage(formattedMessage);
+        } else {
+            player.sendMessage(msgData.getMessage(MessageKey.MISSING_PLAYER));
+        }
+    }
+
+    private void handleListCommand(Player player) {
+        player.sendMessage(msgData.getMessage(MessageKey.INVITED_PLAYER));
+        List<String> invitedUsers = getInvitedUsers(player.getName());
+        invitedUsers.forEach(invitedUser -> player.sendMessage("- " + invitedUser));
     }
 
     private List<String> getInvitedUsers(String inviterName) {
@@ -95,4 +119,5 @@ public class InviteTicketCommand implements CommandExecutor {
         }
         return invitedUsers;
     }
+
 }
