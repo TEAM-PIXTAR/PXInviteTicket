@@ -1,0 +1,10 @@
+name: PXInviteTicket
+version: '${version}'
+main: com.github.luriel0228.pxinviteticket.PXInviteTicket
+api-version: '1.20'
+commands:
+  초대:
+    description: 초대권 시스템
+permissions:
+  px.inviteticket.reload:
+    default: op
