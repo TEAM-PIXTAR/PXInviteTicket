@@ -12,8 +12,9 @@ public class PlayerJoinListener implements Listener {
     private final InvitedValid invitedValid;
     private FileConfiguration config;
 
-    public PlayerJoinListener(InvitedValid inviteManager) {
+    public PlayerJoinListener(InvitedValid inviteManager, FileConfiguration config) {
         this.invitedValid = inviteManager;
+        this.config = config;
     }
 
     @EventHandler

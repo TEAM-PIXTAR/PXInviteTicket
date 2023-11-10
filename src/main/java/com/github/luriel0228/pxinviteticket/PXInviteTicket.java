@@ -34,7 +34,7 @@ public final class PXInviteTicket extends JavaPlugin {
         /* --------------- COMMAND ---------------*/
         if (config != null && config.getBoolean("InviteTicket.EnablePlugin")) {
             setExecutor();
-            registerEvent();
+            registerEvent(config);
         } else {
             getLogger().info("플러그인이 비활성화 상태입니다. 활성화하려면 config.yml에서 `EnablePlugin: true`로 설정한 후 서버를 재시작 해주십시오.");
             getServer().getPluginManager().disablePlugin(this);
@@ -54,8 +54,9 @@ public final class PXInviteTicket extends JavaPlugin {
         returnTicketCmd.setTabCompleter(new InviteTicketTab());
     }
 
-    public void registerEvent() {
-        getServer().getPluginManager().registerEvents(new PlayerJoinListener(invitedValid), this);
+    public void registerEvent(FileConfiguration config) {
+        this.config = config;
+        getServer().getPluginManager().registerEvents(new PlayerJoinListener(invitedValid, config), this);
     }
 }
 
