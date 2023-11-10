@@ -9,3 +9,5 @@ commands:
 permissions:
   px.inviteticket.reload:
     default: op
+  px.inviteticket.bypass:
+    default: op

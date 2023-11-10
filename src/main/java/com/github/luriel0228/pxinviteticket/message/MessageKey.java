@@ -15,6 +15,8 @@ public enum MessageKey {
     MISSING_PLAYER("error.missing_player"),
     UNKNOWN_PLAYER("error.unknown_player"),
     ALREADY_INVITED("error.already_invited"),
+    MAX_INVITES_REACHED("max_invites_reached"),
+    NO_INVITED_PLAYERS("no_invited_players"),
 
     /* --------------- MAIN ---------------*/
     SET_INVITE_SUCCESS("main.invite_success"),

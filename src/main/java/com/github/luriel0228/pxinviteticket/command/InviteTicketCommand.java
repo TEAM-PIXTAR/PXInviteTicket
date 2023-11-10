@@ -8,6 +8,7 @@ import com.github.luriel0228.pxinviteticket.valid.InvitedValid;
 import com.github.luriel0228.pxinviteticket.valid.PermissionValid;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -24,6 +25,7 @@ public class InviteTicketCommand implements CommandExecutor {
 
     private final JavaPlugin plugin;
     private final InvitedValid invitedValid;
+    private FileConfiguration config;
     private final Message msgData = Message.getInstance();
 
     public InviteTicketCommand(PXInviteTicket plugin, InvitedValid invitedValid) {
@@ -81,9 +83,21 @@ public class InviteTicketCommand implements CommandExecutor {
                 return;
             }
 
-            Player invitedPlayer = Bukkit.getPlayerExact(invitedPlayerName);
-            if (invitedPlayer == null) {
+            OfflinePlayer invitedPlayer = null;
+            for (OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
+                if (offlinePlayer.getName() != null && offlinePlayer.getName().equals(invitedPlayerName)) {
+                    invitedPlayer = offlinePlayer;
+                    break;
+                }
+            }
+
+            if (invitedPlayer == null || invitedPlayer.getName() == null || (!invitedPlayer.hasPlayedBefore() && !invitedPlayer.isOnline())) {
                 player.sendMessage(msgData.getMessage(MessageKey.UNKNOWN_PLAYER));
+                return;
+            }
+
+            if (getInvitedUsers(player.getName()).size() >= config.getInt("InviteTicket.InviteLimit")) {
+                player.sendMessage(msgData.getMessage(MessageKey.MAX_INVITES_REACHED));
                 return;
             }
 
@@ -104,8 +118,12 @@ public class InviteTicketCommand implements CommandExecutor {
     }
 
     private void handleListCommand(Player player) {
-        player.sendMessage(msgData.getMessage(MessageKey.INVITED_PLAYER));
         List<String> invitedUsers = getInvitedUsers(player.getName());
+        if (invitedUsers.isEmpty()) {
+            player.sendMessage(msgData.getMessage(MessageKey.NO_INVITED_PLAYERS));
+            return;
+        }
+        player.sendMessage(msgData.getMessage(MessageKey.INVITED_PLAYER));
         invitedUsers.forEach(invitedUser -> player.sendMessage("- " + invitedUser));
     }
 
