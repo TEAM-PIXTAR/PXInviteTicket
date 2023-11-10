@@ -19,6 +19,8 @@ error:
   missing_player: "&c초대할 플레이어의 닉네임을 입력해주세요."
   # 입력받은 유저가 없는 플레이어일 때 출력됨
   unknown_player: "&c해당 플레이어는 없는 플레이어 입니다."
+  # 이미 초대받은 유저를 입력했을 때 출력됨
+  already_invited: "&c{player} 님은 누군가에 의해서 이미 서버에 초대되었습니다."
 main:
   main:
   invite_success: "&a{player}님을 초대하였습니다."

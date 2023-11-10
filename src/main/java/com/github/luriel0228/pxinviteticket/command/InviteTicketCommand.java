@@ -34,20 +34,12 @@ public class InviteTicketCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
-        FileConfiguration config = PXInviteTicket.getInstance().getConfig();
-
-
         if (!(sender instanceof Player)) {
             sender.sendMessage(msgData.getMessage(MessageKey.PLAYER_ONLY));
             return true;
         }
 
         Player player = (Player) sender;
-
-        if (!config.getBoolean("EnablePlugin")) {
-            player.sendMessage("플러그인이 설정에서 비활성화되었습니다. 활성화하려면 config.yml에서 'pluginEnable: true'로 설정하세요.");
-            return true;
-        }
 
         if (args.length == 0) {
             player.sendMessage(msgData.getMessage(MessageKey.WRONG_COMMAND));
@@ -95,6 +87,13 @@ public class InviteTicketCommand implements CommandExecutor {
                 return;
             }
 
+            if (invitedValid.hasReceivedInvite(invitedPlayerName)) {
+                String message = msgData.getMessage(MessageKey.INVITED_PLAYER);
+                String formattedMessage = message.replace("{player}", invitedPlayer.getName());
+                player.sendMessage(formattedMessage);
+                return;
+            }
+
             invitedValid.registerInvite(player.getName(), invitedPlayer.getName());
             String message = msgData.getMessage(MessageKey.SET_INVITE_SUCCESS);
             String formattedMessage = message.replace("{player}", invitedPlayer.getName());
@@ -119,5 +118,4 @@ public class InviteTicketCommand implements CommandExecutor {
         }
         return invitedUsers;
     }
-
 }

@@ -14,6 +14,7 @@ public enum MessageKey {
     WRONG_COMMAND("error.wrong_command"),
     MISSING_PLAYER("error.missing_player"),
     UNKNOWN_PLAYER("error.unknown_player"),
+    ALREADY_INVITED("error.already_invited"),
 
     /* --------------- MAIN ---------------*/
     SET_INVITE_SUCCESS("main.invite_success"),

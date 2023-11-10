@@ -12,3 +12,6 @@ InviteTicket:
 InviteSetting:
   #유저 한명당 초대 가능한 플레이어 개수를 설정합니다.
   InviteLimit: 5
+
+  #초대되지 않은 플레이어가 접속할떄 보이는 메세지
+  kick_message: "초대를 받지 않아서 입장할 수 없습니다."
