@@ -6,8 +6,6 @@
 InviteTicket:
   #이 플러그인의 기능을 활성화할 것인지 조정합니다
   EnablePlugin: true
-  #Motd를 모든 유저에게 보낼지 조정합니다, False = OP에게만 보냅니다
-  Motd: true
 
 InviteSetting:
   #유저 한명당 초대 가능한 플레이어 개수를 설정합니다.

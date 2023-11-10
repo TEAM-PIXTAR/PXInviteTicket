@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'com.github.luriel0228'
-version = '1.5.8'
+version = '1.6.2'
 
 repositories {
     mavenCentral()

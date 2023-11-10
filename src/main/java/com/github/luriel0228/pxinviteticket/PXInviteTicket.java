@@ -8,7 +8,6 @@ import com.github.luriel0228.pxinviteticket.file.DataFile;
 import com.github.luriel0228.pxinviteticket.valid.InvitedValid;
 
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
