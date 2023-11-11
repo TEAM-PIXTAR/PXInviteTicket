@@ -107,6 +107,15 @@ public class InviteTicketCommand implements CommandExecutor {
                 return;
             }
 
+            // 이미 초대된 플레이어인지 확인
+            if (invitedValid.isInvitedPlayer(invitedPlayerName)) {
+                String message = msgData.getMessage(MessageKey.ALREADY_INVITED);
+                String formattedMessage = message.replace("{player}", invitedPlayerName);
+                player.sendMessage(formattedMessage);
+                return;
+            }
+
+            // 초대 제한 확인 및 초대 수 증가
             int inviteLimit = config.getInt("InviteSetting.InviteLimit");
             int playerInvitedCount = invitedValid.getInvitesCount(player.getName());
 
@@ -115,22 +124,18 @@ public class InviteTicketCommand implements CommandExecutor {
                 return;
             }
 
-            if (invitedValid.isInvitedPlayer(invitedPlayerName)) {
-                String message = msgData.getMessage(MessageKey.ALREADY_INVITED);
-                String formattedMessage = message.replace("{player}", invitedPlayerName);
-                player.sendMessage(formattedMessage);
-                return;
-            }
-
+            // 초대 등록 및 메시지 전송
             invitedValid.registerInvite(player.getName(), invitedPlayerName);
-            String message = msgData.getMessage(MessageKey.SET_INVITE_SUCCESS);
             updateInviteCount(player.getName());
+            String message = msgData.getMessage(MessageKey.SET_INVITE_SUCCESS);
             String formattedMessage = message.replace("{player}", invitedPlayerName);
             player.sendMessage(formattedMessage);
+
         } else {
             player.sendMessage(msgData.getMessage(MessageKey.MISSING_PLAYER));
         }
     }
+
 
     private void handleListCommand(@NotNull Player player) throws SQLException {
         this.config = plugin.getConfig();

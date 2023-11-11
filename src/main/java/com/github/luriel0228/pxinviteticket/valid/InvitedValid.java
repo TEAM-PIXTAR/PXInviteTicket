@@ -30,25 +30,20 @@ public class InvitedValid {
     public void registerInvite(String inviter, String invited) {
         try {
             executeUpdateQuery(INSERT_INVITE_QUERY, inviter, invited);
-            updateInviteCount(inviter);
         } catch (SQLException e) {
             handleSQLException(e, "Error while registering invite", INSERT_INVITE_QUERY, inviter, invited);
         }
     }
 
     public void updateInviteCount(String inviter) {
-        if (playerDataExists(inviter)) {
-            try {
+        try {
+            if (playerDataExists(inviter)) {
                 executeUpdateQuery(UPDATE_INVITE_COUNT_QUERY, inviter);
-            } catch (SQLException e) {
-                handleSQLException(e, "invite_count 업데이트 중 오류 발생", UPDATE_INVITE_COUNT_QUERY, inviter);
-            }
-        } else {
-            try {
+            } else {
                 executeUpdateQuery("INSERT INTO invite_counts (inviter, invited_count) VALUES (?, 1)", inviter);
-            } catch (SQLException e) {
-                handleSQLException(e, "플레이어 데이터 추가 중 오류 발생", "INSERT INTO invite_counts (inviter, invited_count) VALUES (?, 1)", inviter);
             }
+        } catch (SQLException e) {
+            handleSQLException(e, "Error while updating invite count", UPDATE_INVITE_COUNT_QUERY, inviter);
         }
     }
 
@@ -61,9 +56,12 @@ public class InvitedValid {
         }
     }
 
-    public boolean playerDataExists(String playerName) {
+    private boolean playerDataExists(String playerName) {
         try {
-            return executeSelectSingleIntQuery(SELECT_PLAYER_COUNT_QUERY, playerName) > 0;
+            String query = "SELECT COUNT(*) FROM invite_counts WHERE inviter = ?";
+            int count = executeSelectSingleIntQuery(query, playerName);
+
+            return count > 0;
         } catch (SQLException e) {
             handleSQLException(e, "Error while checking if player data exists", SELECT_PLAYER_COUNT_QUERY, playerName);
             return false;
