@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 public class InviteTicketTab implements TabCompleter {
@@ -19,15 +19,13 @@ public class InviteTicketTab implements TabCompleter {
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
         List<String> completions = new ArrayList<>();
 
-        if (args.length == 1) {
-            if (label.equalsIgnoreCase("초대")) {
-                if (PermissionValid.hasPermission((Player) sender, "리로드")) completions.add("리로드");
-                completions.add("등록");
-                completions.add("목록");
-
+        if (args.length == 1 && label.equalsIgnoreCase("초대")) {
+            if (PermissionValid.hasPermission((Player) sender, "리로드")) {
+                completions.add("리로드");
             }
-            return StringUtil.copyPartialMatches(args[0], completions, new ArrayList<>());
+            completions.addAll(Arrays.asList("등록", "목록"));
         }
-        return Collections.emptyList();
+
+        return StringUtil.copyPartialMatches(args[0], completions, new ArrayList<>());
     }
 }

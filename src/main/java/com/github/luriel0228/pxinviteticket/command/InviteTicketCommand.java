@@ -6,7 +6,6 @@ import com.github.luriel0228.pxinviteticket.message.MessageConfig;
 import com.github.luriel0228.pxinviteticket.message.MessageKey;
 import com.github.luriel0228.pxinviteticket.valid.InvitedValid;
 import com.github.luriel0228.pxinviteticket.valid.PermissionValid;
-
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -37,6 +36,7 @@ public class InviteTicketCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
+        // 플레이어만 해당 명령어 사용 가능
         if (!(sender instanceof Player)) {
             sender.sendMessage(msgData.getMessage(MessageKey.PLAYER_ONLY));
             return true;
@@ -44,12 +44,14 @@ public class InviteTicketCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
+        // 잘못된 명령어 형식
         if (args.length == 0) {
             player.sendMessage(msgData.getMessage(MessageKey.WRONG_COMMAND));
             return true;
         }
 
         try {
+            // 명령어 처리
             switch (args[0].toLowerCase()) {
                 case "리로드":
                     handleReloadCommand(player);
@@ -73,6 +75,7 @@ public class InviteTicketCommand implements CommandExecutor {
     }
 
     private void handleReloadCommand(Player player) {
+        // 리로드 권한 확인
         if (PermissionValid.hasPermission(player, "reload")) {
             plugin.reloadConfig();
 
@@ -101,20 +104,19 @@ public class InviteTicketCommand implements CommandExecutor {
 
             if (invitedPlayerName.equalsIgnoreCase(player.getName())) {
                 player.sendMessage(msgData.getMessage(MessageKey.SELF_INVITE));
-                player.sendMessage(invitedPlayerName);
-                player.sendMessage(player.getName());
                 return;
             }
 
             int inviteLimit = config.getInt("InviteSetting.InviteLimit");
-            int playerinvitedcount = invitedValid.getInvitesCount(player.getName());
-            if (playerinvitedcount >= inviteLimit) {
+            int playerInvitedCount = invitedValid.getInvitesCount(player.getName());
+
+            if (playerInvitedCount >= inviteLimit) {
                 player.sendMessage(msgData.getMessage(MessageKey.MAX_INVITES_REACHED));
                 return;
             }
 
             if (invitedValid.isInvitedPlayer(invitedPlayerName)) {
-                String message = msgData.getMessage(MessageKey.INVITED_PLAYER);
+                String message = msgData.getMessage(MessageKey.ALREADY_INVITED);
                 String formattedMessage = message.replace("{player}", invitedPlayerName);
                 player.sendMessage(formattedMessage);
                 return;
@@ -138,9 +140,9 @@ public class InviteTicketCommand implements CommandExecutor {
             return;
         }
         int inviteLimit = config.getInt("InviteSetting.InviteLimit");
-        int playerinvitedcount = invitedValid.getInvitesCount(player.getName());
+        int playerInvitedCount = invitedValid.getInvitesCount(player.getName());
         String message = msgData.getMessage(MessageKey.INVITED_PLAYER);
-        String formattedMessage = message.replace("{int}", String.valueOf(playerinvitedcount))
+        String formattedMessage = message.replace("{int}", String.valueOf(playerInvitedCount))
                 .replace("{max}", String.valueOf(inviteLimit));
         player.sendMessage(formattedMessage);
         invitedUsers.forEach(invitedUser -> player.sendMessage("- " + invitedUser));
@@ -150,7 +152,7 @@ public class InviteTicketCommand implements CommandExecutor {
         invitedValid.updateInviteCount(inviter);
     }
 
-    private @NotNull List<String> getInvitedUsers(String inviterName){
+    private @NotNull List<String> getInvitedUsers(String inviterName) {
         List<String> invitedUsers = new ArrayList<>();
         for (Map.Entry<String, String> entry : invitedValid.getInvites().entrySet()) {
             if (entry.getValue().equals(inviterName)) {

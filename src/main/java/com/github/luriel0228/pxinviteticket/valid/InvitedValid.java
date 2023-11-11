@@ -21,6 +21,7 @@ public class InvitedValid {
     private static final String UPDATE_INVITE_COUNT_QUERY = "UPDATE invite_counts SET invited_count = invited_count + 1 WHERE inviter = ?";
     private static final String SELECT_ALL_INVITES_QUERY = "SELECT * FROM invites";
     private static final String SELECT_INVITE_COUNT_BY_INVITER_QUERY = "SELECT invited_count FROM invite_counts WHERE inviter = ?";
+    private static final String SELECT_PLAYER_COUNT_QUERY = "SELECT COUNT(*) FROM invite_counts WHERE inviter = ?";
 
     public InvitedValid(@NotNull DataFile sqliteManager) {
         this.connection = sqliteManager.getConnection();
@@ -36,10 +37,18 @@ public class InvitedValid {
     }
 
     public void updateInviteCount(String inviter) {
-        try {
-            executeUpdateQuery(UPDATE_INVITE_COUNT_QUERY, inviter);
-        } catch (SQLException e) {
-            handleSQLException(e, "Error while updating invite count", UPDATE_INVITE_COUNT_QUERY, inviter);
+        if (playerDataExists(inviter)) {
+            try {
+                executeUpdateQuery(UPDATE_INVITE_COUNT_QUERY, inviter);
+            } catch (SQLException e) {
+                handleSQLException(e, "invite_count 업데이트 중 오류 발생", UPDATE_INVITE_COUNT_QUERY, inviter);
+            }
+        } else {
+            try {
+                executeUpdateQuery("INSERT INTO invite_counts (inviter, invited_count) VALUES (?, 1)", inviter);
+            } catch (SQLException e) {
+                handleSQLException(e, "플레이어 데이터 추가 중 오류 발생", "INSERT INTO invite_counts (inviter, invited_count) VALUES (?, 1)", inviter);
+            }
         }
     }
 
@@ -54,37 +63,16 @@ public class InvitedValid {
 
     public boolean playerDataExists(String playerName) {
         try {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM invite_counts WHERE inviter = ?");
-            statement.setString(1, playerName);
-            ResultSet resultSet = statement.executeQuery();
-            return resultSet.next();
+            return executeSelectSingleIntQuery(SELECT_PLAYER_COUNT_QUERY, playerName) > 0;
         } catch (SQLException e) {
-            handleSQLException(e);
+            handleSQLException(e, "Error while checking if player data exists", SELECT_PLAYER_COUNT_QUERY, playerName);
             return false;
-        }
-    }
-
-    public void initializePlayerData(String playerName) {
-        try {
-            if (!playerDataExists(playerName)) {
-                executeUpdateQuery("INSERT INTO invite_counts (inviter, invited_count) VALUES (?, 0)", playerName);
-            }
-        } catch (SQLException e) {
-            handleSQLException(e, "Error while initializing player data", "INSERT INTO invite_counts (inviter, invited_count) VALUES (?, 0)", playerName);
         }
     }
 
     public boolean isInvitedPlayer(String invitedPlayerName) {
-        try {
-            String query = "SELECT * FROM invites WHERE invited = ?";
-            ResultSet resultSet = executeSelectQuery(query, invitedPlayerName);
-            return resultSet.next();
-        } catch (SQLException e) {
-            handleSQLException(e, "Error while checking if player is invited", "SELECT_INVITES_BY_PLAYER_QUERY", invitedPlayerName);
-            return false;
-        }
+        return getInvites().containsKey(invitedPlayerName);
     }
-
     public Map<String, String> getInvites() {
         Map<String, String> invites = new HashMap<>();
         try (PreparedStatement statement = connection.prepareStatement(SELECT_ALL_INVITES_QUERY);
@@ -107,18 +95,12 @@ public class InvitedValid {
         }
     }
 
-    private ResultSet executeSelectQuery(String query, String @NotNull ... params) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            setPreparedStatementParameters(statement, params);
-            return statement.executeQuery();
-        }
-    }
-
     private int executeSelectSingleIntQuery(String query, String @NotNull ... params) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             setPreparedStatementParameters(statement, params);
-            ResultSet resultSet = statement.executeQuery();
-            return resultSet.next() ? resultSet.getInt(1) : 0;
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next() ? resultSet.getInt(1) : 0;
+            }
         }
     }
 
@@ -128,11 +110,7 @@ public class InvitedValid {
         }
     }
 
-    public void handleSQLException(@NotNull SQLException e, String errorMessage, String query, String... params) {
-        logger.log(Level.WARNING, errorMessage + " - Query: " + query + " - Params: " + String.join(", ", params), e);
-    }
-
-    public void handleSQLException(@NotNull SQLException e) {
-        logger.log(Level.WARNING, "플레이어 데이터 존재 여부를 확인하는 동안 오류가 발생했습니다.", e);
+    private void handleSQLException(@NotNull SQLException e, String errorMessage, String query, String... params) {
+        logger.log(Level.WARNING, errorMessage + " - Query: " + query + " - Params: " + String.join(", ", params) + " - Error: " + e.getMessage(), e);
     }
 }

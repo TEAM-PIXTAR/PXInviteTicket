@@ -4,8 +4,12 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DataFile {
+
+    private static final Logger logger = Logger.getLogger(DataFile.class.getName());
 
     private Connection connection;
 
@@ -14,7 +18,7 @@ public class DataFile {
             connection = DriverManager.getConnection("jdbc:sqlite:" + dbName);
             createTables();
         } catch (SQLException e) {
-            handleSQLException(e);
+            handleSQLException("연결 또는 테이블 생성 중 오류가 발생했습니다", e);
         }
     }
 
@@ -31,7 +35,7 @@ public class DataFile {
                     "invited_count INT DEFAULT 0)";
             statement.execute(inviteCountsTableSQL);
         } catch (SQLException e) {
-            handleSQLException(e);
+            handleSQLException("테이블 생성 중 오류가 발생했습니다", e);
         }
     }
 
@@ -45,10 +49,11 @@ public class DataFile {
                 connection.close();
             }
         } catch (SQLException e) {
-            handleSQLException(e);
+            handleSQLException("연결을 닫는 중 오류가 발생했습니다", e);
         }
     }
-    private void handleSQLException(SQLException e) {
-        e.printStackTrace();
+
+    private void handleSQLException(String errorMessage, SQLException e) {
+        logger.log(Level.SEVERE, errorMessage, e);
     }
 }
