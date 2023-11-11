@@ -12,21 +12,26 @@ public class DataFile {
     public DataFile(String dbName) {
         try {
             connection = DriverManager.getConnection("jdbc:sqlite:" + dbName);
-            createTable();
+            createTables();
         } catch (SQLException e) {
-            e.printStackTrace();
+            handleSQLException(e);
         }
     }
 
-    private void createTable() {
-        try {
-            Statement statement = connection.createStatement();
-            String sql = "CREATE TABLE IF NOT EXISTS invites (" +
+    private void createTables() {
+        try (Statement statement = connection.createStatement()) {
+
+            String invitesTableSQL = "CREATE TABLE IF NOT EXISTS invites (" +
                     "inviter TEXT NOT NULL," +
                     "invited TEXT NOT NULL)";
-            statement.execute(sql);
+            statement.execute(invitesTableSQL);
+
+            String inviteCountsTableSQL = "CREATE TABLE IF NOT EXISTS invite_counts (" +
+                    "inviter TEXT NOT NULL," +
+                    "invited_count INT DEFAULT 0)";
+            statement.execute(inviteCountsTableSQL);
         } catch (SQLException e) {
-            e.printStackTrace();
+            handleSQLException(e);
         }
     }
 
@@ -36,9 +41,14 @@ public class DataFile {
 
     public void closeConnection() {
         try {
-            connection.close();
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            handleSQLException(e);
         }
+    }
+    private void handleSQLException(SQLException e) {
+        e.printStackTrace();
     }
 }

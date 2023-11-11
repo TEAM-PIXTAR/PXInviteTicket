@@ -10,6 +10,7 @@ public enum MessageKey {
 
     /* --------------- ERROR ---------------*/
     PLAYER_ONLY("error.player_only"),
+    SQL_ERROR("error.sql_error"),
     NO_PERMISSION("error.no_permission"),
     WRONG_COMMAND("error.wrong_command"),
     MISSING_PLAYER("error.missing_player"),
