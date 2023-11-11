@@ -1,6 +1,7 @@
 package com.github.luriel0228.pxinviteticket.valid;
 
 import com.github.luriel0228.pxinviteticket.file.DataFile;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,8 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.jetbrains.annotations.NotNull;
 
 public class InvitedValid {
 
@@ -54,6 +53,28 @@ public class InvitedValid {
         }
     }
 
+    public boolean playerDataExists(String playerName) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM invite_counts WHERE inviter = ?");
+            statement.setString(1, playerName);
+            ResultSet resultSet = statement.executeQuery();
+            return resultSet.next();
+        } catch (SQLException e) {
+            handleSQLException(e);
+            return false;
+        }
+    }
+
+    public void initializePlayerData(String playerName) {
+        try {
+            if (!playerDataExists(playerName)) {
+                executeUpdateQuery("INSERT INTO invite_counts (inviter, invited_count) VALUES (?, 0)", playerName);
+            }
+        } catch (SQLException e) {
+            handleSQLException(e, "Error while initializing player data", "INSERT INTO invite_counts (inviter, invited_count) VALUES (?, 0)", playerName);
+        }
+    }
+
     public boolean hasReceivedInvite(String playerName) {
         try {
             return executeSelectQuery(SELECT_INVITES_BY_PLAYER_QUERY, playerName).next();
@@ -73,7 +94,7 @@ public class InvitedValid {
                 invites.put(invited, inviter);
             }
         } catch (SQLException e) {
-            handleSQLException(e, "모든 초대를 검색하는 동안 오류가 발생했습니다.", SELECT_ALL_INVITES_QUERY);
+            handleSQLException(e, "Error while fetching all invites", SELECT_ALL_INVITES_QUERY);
         }
         return invites;
     }
@@ -108,5 +129,9 @@ public class InvitedValid {
 
     private void handleSQLException(@NotNull SQLException e, String errorMessage, String query, String... params) {
         logger.log(Level.WARNING, errorMessage + " - Query: " + query + " - Params: " + String.join(", ", params), e);
+    }
+
+    private void handleSQLException(@NotNull SQLException e) {
+        logger.log(Level.WARNING, "플레이어 데이터 존재 여부를 확인하는 동안 오류가 발생했습니다.", e);
     }
 }

@@ -91,7 +91,7 @@ public class InviteTicketCommand implements CommandExecutor {
             }
 
             int inviteLimit = config.getInt("InviteTicket.InviteLimit");
-            if (invitedValid.getInvitesCount(player.getName()) >= inviteLimit) {
+            if (invitedValid.getInvitesCount(player.getName()) <= inviteLimit) {
                 player.sendMessage(msgData.getMessage(MessageKey.MAX_INVITES_REACHED));
                 return;
             }
@@ -114,11 +114,16 @@ public class InviteTicketCommand implements CommandExecutor {
 
     private void handleListCommand(@NotNull Player player) throws SQLException {
         List<String> invitedUsers = getInvitedUsers(player.getName());
+        int inviteLimit = config.getInt("InviteTicket.InviteLimit");
         if (invitedUsers.isEmpty()) {
             player.sendMessage(msgData.getMessage(MessageKey.NO_INVITED_PLAYERS));
             return;
         }
-        player.sendMessage(msgData.getMessage(MessageKey.INVITED_PLAYER));
+        String message = msgData.getMessage(MessageKey.INVITED_PLAYER);
+        int inviteCount = invitedValid.getInvitesCount(player.getName());
+        String formattedMessage = message.replace("{int}", String.valueOf(inviteCount))
+                .replace("{max}", String.valueOf(inviteLimit));
+        player.sendMessage(formattedMessage);
         invitedUsers.forEach(invitedUser -> player.sendMessage("- " + invitedUser));
     }
 

@@ -10,29 +10,30 @@ import org.bukkit.event.player.PlayerLoginEvent;
 public class PlayerJoinListener implements Listener {
 
     private final InvitedValid invitedValid;
-    private FileConfiguration config;
+    private final FileConfiguration config;
 
-    public PlayerJoinListener(InvitedValid inviteManager, FileConfiguration config) {
-        this.invitedValid = inviteManager;
+    public PlayerJoinListener(InvitedValid invitedValid, FileConfiguration config) {
+        this.invitedValid = invitedValid;
         this.config = config;
     }
 
     @EventHandler
     public void onPlayerLogin(PlayerLoginEvent event) {
+
+        String playerName = event.getPlayer().getName();
+
+        if (!invitedValid.playerDataExists(playerName)) {
+            invitedValid.initializePlayerData(playerName);
+        }
+
         try {
-            handlePlayerLogin(event);
+            handlePlayerLogin(event, playerName);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void handlePlayerLogin(PlayerLoginEvent event) {
-        if (event.getPlayer() == null) {
-            return;
-        }
-
-        String playerName = event.getPlayer().getName();
-
+    private void handlePlayerLogin(PlayerLoginEvent event, String playerName) {
         if (PermissionValid.hasPermission(event.getPlayer(), "bypass")) {
             return;
         }

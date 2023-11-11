@@ -26,9 +26,9 @@ error:
   # 초대한 유저가 없을 떄 출력됨
   no_invited_players: "&c초대한 유저가 없습니다."
   # 설정한 인당 초대 가능 횟수를 초과했을 떄 출력됨
-  max_invites_reached: "&c최대 초대 가능한 수를 초과했습니다."
+  max_invites_reached: "&c더 이상 플레이어를 초대 할 수 없습니다."
 
 main:
   main:
   invite_success: "&a{player}님을 초대하였습니다."
-  invited_player: "&f초대 목록"
+  invited_player: "&f초대 목록 ({int}/{max})"
