@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,9 +72,17 @@ public class InviteTicketCommand implements CommandExecutor {
         return true;
     }
 
-    private void handleReloadCommand(Player player) throws SQLException {
+    private void handleReloadCommand(Player player) {
         if (PermissionValid.hasPermission(player, "reload")) {
             plugin.reloadConfig();
+
+            File dataFolder = plugin.getDataFolder();
+
+            File configFile = new File(dataFolder, "config.yml");
+            if (!configFile.exists()) {
+                plugin.saveDefaultConfig();
+            }
+
             MessageConfig.reload();
             player.sendMessage(msgData.getMessage(MessageKey.RELOAD_CONFIG));
         }
@@ -90,7 +99,7 @@ public class InviteTicketCommand implements CommandExecutor {
                 return;
             }
 
-            int inviteLimit = config.getInt("InviteTicket.InviteLimit");
+            int inviteLimit = config.getInt("InviteSetting.InviteLimit");
             int playerinvitedcount = invitedValid.getInvitesCount(player.getName());
             if (playerinvitedcount >= inviteLimit) {
                 player.sendMessage(msgData.getMessage(MessageKey.MAX_INVITES_REACHED));
@@ -116,14 +125,14 @@ public class InviteTicketCommand implements CommandExecutor {
     private void handleListCommand(@NotNull Player player) throws SQLException {
         this.config = plugin.getConfig();
         List<String> invitedUsers = getInvitedUsers(player.getName());
-        int inviteLimit = config.getInt("InviteTicket.InviteLimit");
         if (invitedUsers.isEmpty()) {
             player.sendMessage(msgData.getMessage(MessageKey.NO_INVITED_PLAYERS));
             return;
         }
+        int inviteLimit = config.getInt("InviteSetting.InviteLimit");
+        int playerinvitedcount = invitedValid.getInvitesCount(player.getName());
         String message = msgData.getMessage(MessageKey.INVITED_PLAYER);
-        int inviteCount = invitedValid.getInvitesCount(player.getName());
-        String formattedMessage = message.replace("{int}", String.valueOf(inviteCount))
+        String formattedMessage = message.replace("{int}", String.valueOf(playerinvitedcount))
                 .replace("{max}", String.valueOf(inviteLimit));
         player.sendMessage(formattedMessage);
         invitedUsers.forEach(invitedUser -> player.sendMessage("- " + invitedUser));
