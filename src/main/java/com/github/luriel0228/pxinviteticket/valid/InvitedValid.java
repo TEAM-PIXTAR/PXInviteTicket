@@ -18,8 +18,7 @@ public class InvitedValid {
     private static final Logger logger = Logger.getLogger(InvitedValid.class.getName());
 
     private static final String INSERT_INVITE_QUERY = "INSERT INTO invites (inviter, invited) VALUES (?, ?)";
-    private static final String UPDATE_INVITE_COUNT_QUERY = "INSERT OR REPLACE INTO invite_counts (inviter, invited_count) VALUES (?, COALESCE((SELECT invited_count FROM invite_counts WHERE inviter = ?), 0) + 1)";
-    private static final String SELECT_INVITES_BY_PLAYER_QUERY = "SELECT * FROM invites WHERE invited = ?";
+    private static final String UPDATE_INVITE_COUNT_QUERY = "UPDATE invite_counts SET invited_count = invited_count + 1 WHERE inviter = ?";
     private static final String SELECT_ALL_INVITES_QUERY = "SELECT * FROM invites";
     private static final String SELECT_INVITE_COUNT_BY_INVITER_QUERY = "SELECT invited_count FROM invite_counts WHERE inviter = ?";
 
@@ -36,11 +35,11 @@ public class InvitedValid {
         }
     }
 
-    private void updateInviteCount(String inviter) {
+    public void updateInviteCount(String inviter) {
         try {
-            executeUpdateQuery(UPDATE_INVITE_COUNT_QUERY, inviter, inviter);
+            executeUpdateQuery(UPDATE_INVITE_COUNT_QUERY, inviter);
         } catch (SQLException e) {
-            handleSQLException(e, "Error while updating invite count", UPDATE_INVITE_COUNT_QUERY, inviter, inviter);
+            handleSQLException(e, "Error while updating invite count", UPDATE_INVITE_COUNT_QUERY, inviter);
         }
     }
 
@@ -75,11 +74,13 @@ public class InvitedValid {
         }
     }
 
-    public boolean hasReceivedInvite(String playerName) {
+    public boolean isInvitedPlayer(String invitedPlayerName) {
         try {
-            return executeSelectQuery(SELECT_INVITES_BY_PLAYER_QUERY, playerName).next();
+            String query = "SELECT * FROM invites WHERE invited = ?";
+            ResultSet resultSet = executeSelectQuery(query, invitedPlayerName);
+            return resultSet.next();
         } catch (SQLException e) {
-            handleSQLException(e, "Error while checking received invite", SELECT_INVITES_BY_PLAYER_QUERY, playerName);
+            handleSQLException(e, "Error while checking if player is invited", "SELECT_INVITES_BY_PLAYER_QUERY", invitedPlayerName);
             return false;
         }
     }
@@ -127,11 +128,11 @@ public class InvitedValid {
         }
     }
 
-    private void handleSQLException(@NotNull SQLException e, String errorMessage, String query, String... params) {
+    public void handleSQLException(@NotNull SQLException e, String errorMessage, String query, String... params) {
         logger.log(Level.WARNING, errorMessage + " - Query: " + query + " - Params: " + String.join(", ", params), e);
     }
 
-    private void handleSQLException(@NotNull SQLException e) {
+    public void handleSQLException(@NotNull SQLException e) {
         logger.log(Level.WARNING, "플레이어 데이터 존재 여부를 확인하는 동안 오류가 발생했습니다.", e);
     }
 }

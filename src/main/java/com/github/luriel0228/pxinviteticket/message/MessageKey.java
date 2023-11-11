@@ -14,7 +14,7 @@ public enum MessageKey {
     NO_PERMISSION("error.no_permission"),
     WRONG_COMMAND("error.wrong_command"),
     MISSING_PLAYER("error.missing_player"),
-    UNKNOWN_PLAYER("error.unknown_player"),
+    SELF_INVITE("error.self_invite"),
     ALREADY_INVITED("error.already_invited"),
     MAX_INVITES_REACHED("error.max_invites_reached"),
     NO_INVITED_PLAYERS("error.no_invited_players"),

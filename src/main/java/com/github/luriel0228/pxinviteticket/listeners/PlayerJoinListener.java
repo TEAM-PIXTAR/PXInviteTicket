@@ -19,13 +19,7 @@ public class PlayerJoinListener implements Listener {
 
     @EventHandler
     public void onPlayerLogin(PlayerLoginEvent event) {
-
         String playerName = event.getPlayer().getName();
-
-        if (!invitedValid.playerDataExists(playerName)) {
-            invitedValid.initializePlayerData(playerName);
-        }
-
         try {
             handlePlayerLogin(event, playerName);
         } catch (Exception e) {
@@ -38,7 +32,7 @@ public class PlayerJoinListener implements Listener {
             return;
         }
 
-        if (!invitedValid.hasReceivedInvite(playerName)) {
+        if (invitedValid.isInvitedPlayer(playerName)) {
             kickPlayer(event, config.getString("InviteSetting.kick_message"));
         }
     }

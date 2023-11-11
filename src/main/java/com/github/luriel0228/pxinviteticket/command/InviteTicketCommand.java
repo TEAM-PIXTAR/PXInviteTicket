@@ -99,6 +99,13 @@ public class InviteTicketCommand implements CommandExecutor {
                 return;
             }
 
+            if (invitedPlayerName.equalsIgnoreCase(player.getName())) {
+                player.sendMessage(msgData.getMessage(MessageKey.SELF_INVITE));
+                player.sendMessage(invitedPlayerName);
+                player.sendMessage(player.getName());
+                return;
+            }
+
             int inviteLimit = config.getInt("InviteSetting.InviteLimit");
             int playerinvitedcount = invitedValid.getInvitesCount(player.getName());
             if (playerinvitedcount >= inviteLimit) {
@@ -106,7 +113,7 @@ public class InviteTicketCommand implements CommandExecutor {
                 return;
             }
 
-            if (invitedValid.hasReceivedInvite(invitedPlayerName)) {
+            if (invitedValid.isInvitedPlayer(invitedPlayerName)) {
                 String message = msgData.getMessage(MessageKey.INVITED_PLAYER);
                 String formattedMessage = message.replace("{player}", invitedPlayerName);
                 player.sendMessage(formattedMessage);
@@ -115,6 +122,7 @@ public class InviteTicketCommand implements CommandExecutor {
 
             invitedValid.registerInvite(player.getName(), invitedPlayerName);
             String message = msgData.getMessage(MessageKey.SET_INVITE_SUCCESS);
+            updateInviteCount(player.getName());
             String formattedMessage = message.replace("{player}", invitedPlayerName);
             player.sendMessage(formattedMessage);
         } else {
@@ -136,6 +144,10 @@ public class InviteTicketCommand implements CommandExecutor {
                 .replace("{max}", String.valueOf(inviteLimit));
         player.sendMessage(formattedMessage);
         invitedUsers.forEach(invitedUser -> player.sendMessage("- " + invitedUser));
+    }
+
+    private void updateInviteCount(String inviter) {
+        invitedValid.updateInviteCount(inviter);
     }
 
     private @NotNull List<String> getInvitedUsers(String inviterName){
