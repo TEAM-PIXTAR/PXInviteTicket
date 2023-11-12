@@ -153,7 +153,7 @@ public class InviteTicketCommand implements CommandExecutor {
     }
 
     private void saveInviteItem(ItemStack inviteItem) {
-        ConfigurationSection configSection = getConfigSection("InviteSetting.InviteItem");
+        ConfigurationSection configSection = getConfigSection();
 
         configSection.set("material", inviteItem.getType().name());
 
@@ -169,10 +169,10 @@ public class InviteTicketCommand implements CommandExecutor {
         plugin.saveConfig();
     }
 
-    private ConfigurationSection getConfigSection(String path) {
-        ConfigurationSection configSection = plugin.getConfig().getConfigurationSection(path);
+    private ConfigurationSection getConfigSection() {
+        ConfigurationSection configSection = plugin.getConfig().getConfigurationSection("InviteSetting.InviteItem");
         if (configSection == null) {
-            configSection = plugin.getConfig().createSection(path);
+            configSection = plugin.getConfig().createSection("InviteSetting.InviteItem");
         }
         return configSection;
     }
@@ -204,7 +204,7 @@ public class InviteTicketCommand implements CommandExecutor {
     }
 
     private ItemStack loadInviteItem() {
-        ConfigurationSection configSection = getConfigSection("InviteSetting.InviteItem");
+        ConfigurationSection configSection = getConfigSection();
         Material material = Material.matchMaterial(configSection.getString("material", "PAPER"));
 
         if (material == null) {
@@ -231,13 +231,15 @@ public class InviteTicketCommand implements CommandExecutor {
     private ItemStack createDefaultInviteItem() {
         ItemStack defaultInviteItem = new ItemStack(Material.PAPER);
         ItemMeta itemMeta = defaultInviteItem.getItemMeta();
-        Objects.requireNonNull(itemMeta).setDisplayName("초대권");
-        defaultInviteItem.setItemMeta(itemMeta);
+        if (itemMeta != null) {
+            itemMeta.setDisplayName("초대권");
+            defaultInviteItem.setItemMeta(itemMeta);
+        }
         return defaultInviteItem;
     }
 
     private ItemStack getInviteItem() {
-        return new ItemStack(Material.DIAMOND); // 예시로 다이아몬드를 초대권 아이템으로 사용
+        return loadInviteItem();
     }
 
     private void handleListCommand(@NotNull Player player) throws SQLException {
