@@ -71,6 +71,7 @@ public class InvitedValid {
     public boolean isInvitedPlayer(String invitedPlayerName) {
         return getInvites().containsKey(invitedPlayerName);
     }
+
     public Map<String, String> getInvites() {
         Map<String, String> invites = new HashMap<>();
         try (PreparedStatement statement = connection.prepareStatement(SELECT_ALL_INVITES_QUERY);

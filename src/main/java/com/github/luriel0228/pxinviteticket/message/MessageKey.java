@@ -18,10 +18,16 @@ public enum MessageKey {
     ALREADY_INVITED("error.already_invited"),
     MAX_INVITES_REACHED("error.max_invites_reached"),
     NO_INVITED_PLAYERS("error.no_invited_players"),
+    EMPTY_HAND("error.empty_hand"),
+    NO_INVITE_ITEM_SET("error.no_invite_itemset"),
+    INVALID_PLAYER("error.invalid_player"),
 
     /* --------------- MAIN ---------------*/
     SET_INVITE_SUCCESS("main.invite_success"),
-    INVITED_PLAYER("main.invited_player");
+    INVITED_PLAYER("main.invited_player"),
+    INVITE_ITEM_REGISTERED("main.invite_item_registered"),
+    NO_INVITE_ITEM("main.no_invite_item"),
+    GIVE_INVITE_SUCCESS("main.give_invite_success");
 
     private final String key;
 

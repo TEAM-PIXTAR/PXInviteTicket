@@ -18,17 +18,24 @@ error:
   # 잘못된 명령어를 입력했을 때 출력됨
   wrong_command: "&c잘못된 명령어입니다."
   # 유저값을 입력 받지 못했을 때 출력됨
-  missing_player: "&c초대할 플레이어의 닉네임을 입력해주세요."
+  missing_player: "&c플레이어의 닉네임을 입력해주세요."
   # 자신을 초대했을 때 출력됨
   self_invite: "&c자신을 초대할 수 없습니다."
   # 이미 초대받은 유저를 입력했을 때 출력됨
   already_invited: "&c{player} 님은 누군가에 의해서 이미 서버에 초대되었습니다."
-  # 초대한 유저가 없을 떄 출력됨
-  no_invited_players: "&c초대한 유저가 없습니다."
   # 설정한 인당 초대 가능 횟수를 초과했을 떄 출력됨
   max_invites_reached: "&c더 이상 플레이어를 초대 할 수 없습니다."
-
+  # 초대한 유저가 없을 떄 출력됨
+  no_invited_players: "&c초대한 유저가 없습니다."
+  # 손에 아이템이 없을 떄 출력됨
+  empty_hand: "&c초대권으로 등록할 아이템을 손에 들고 명령어를 실행해주세요."
+  # 설정한 초대권이 없을 떄 출력됨
+  no_invite_itemset: "&c설정한 초대권이 없습니다. 기본 설정으로 초대권을 등록합니다."
+  # 설정한 플레이어가 없거나 오프라인 유저일 떄 출력됨
+  invalid_player: "&c해당 플레이어는 없거나 오프라인 유저입니다."
 main:
-  main:
   invite_success: "&a{player}님을 초대하였습니다."
   invited_player: "&f초대 목록 ({int}/{max})"
+  invite_item_registered: "&f손에 든 아이템을 초대권으로 등록하였습니다."
+  no_invite_item: "&f초대권이 없습니다. 초대권을 인벤토리에 넣은 후 명령어를 실행 해주세요."
+  give_invite_success: "&f{player} 님에게 초대권을 지급하였습니다."

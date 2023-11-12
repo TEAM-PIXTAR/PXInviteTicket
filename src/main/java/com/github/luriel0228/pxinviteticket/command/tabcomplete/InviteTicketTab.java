@@ -23,6 +23,9 @@ public class InviteTicketTab implements TabCompleter {
             if (PermissionValid.hasPermission((Player) sender, "리로드")) {
                 completions.add("리로드");
             }
+            if (PermissionValid.hasPermission((Player) sender, "admin")) {
+                completions.addAll(Arrays.asList("초대권등록", "초대권지급"));
+            }
             completions.addAll(Arrays.asList("등록", "목록"));
         }
 
