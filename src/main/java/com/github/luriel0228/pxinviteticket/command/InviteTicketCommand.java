@@ -151,7 +151,6 @@ public class InviteTicketCommand implements CommandExecutor {
     private void setInviteItemInHand(ItemStack inviteItem) {
         ConfigurationSection configSection = getSettingSection();
 
-        // 초대권 정보 갱신
         configSection.set("material", inviteItem.getType().name());
 
         ItemMeta itemMeta = inviteItem.getItemMeta();
@@ -216,6 +215,14 @@ public class InviteTicketCommand implements CommandExecutor {
         }
     }
 
+    private void saveSettingConfig() {
+        try {
+            settingConfig.save(settingFile);
+        } catch (IOException e) {
+            plugin.getLogger().log(Level.SEVERE, "Could not save setting.yml", e);
+        }
+    }
+
     private void handleListCommand(Player player) throws SQLException {
         List<String> invitedUsers = getInvitedUsers(player.getName());
         if (invitedUsers.isEmpty()) {
@@ -247,13 +254,11 @@ public class InviteTicketCommand implements CommandExecutor {
     private ConfigurationSection getSettingSection() {
         ConfigurationSection settingSection = settingConfig.getConfigurationSection("InviteSetting");
         if (settingSection == null) {
-            // setting.yml에 InviteSetting 섹션이 없으면 생성
             settingSection = settingConfig.createSection("InviteSetting");
         }
 
         ConfigurationSection inviteItemSection = settingSection.getConfigurationSection("InviteItem");
         if (inviteItemSection == null) {
-            // setting.yml에 InviteItem 섹션이 없으면 생성
             inviteItemSection = settingSection.createSection("InviteItem");
         }
 
@@ -287,13 +292,5 @@ public class InviteTicketCommand implements CommandExecutor {
 
         inviteItem.setItemMeta(itemMeta);
         return inviteItem;
-    }
-
-    private void saveSettingConfig() {
-        try {
-            settingConfig.save(settingFile);
-        } catch (IOException e) {
-            plugin.getLogger().log(Level.SEVERE, "Could not save setting.yml", e);
-        }
     }
 }
