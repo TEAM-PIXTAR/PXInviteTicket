@@ -1,0 +1,6 @@
+InviteSetting:
+  InviteItem:
+    material: PAPER
+    name: '초대권'
+    lore:
+      - ''
