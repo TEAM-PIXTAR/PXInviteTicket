@@ -190,9 +190,10 @@ public class InviteTicketCommand implements CommandExecutor {
             configSection.set("lore", itemMeta.getLore());
         }
 
+        configSection.set("custom-model-data", itemMeta.getCustomModelData());
+
         saveSettingConfig();
     }
-
 
     private void saveInviteItem(ItemStack inviteItem) {
         ConfigurationSection configSection = getSettingSection();
@@ -210,8 +211,11 @@ public class InviteTicketCommand implements CommandExecutor {
             configSection.set("lore", itemMeta.getLore());
         }
 
+        configSection.set("custom-model-data", itemMeta.getCustomModelData());
+
         saveSettingConfig();
     }
+
 
     private ItemStack getInviteItem() {
         return loadCustomInviteItem();
@@ -318,7 +322,14 @@ public class InviteTicketCommand implements CommandExecutor {
             }
         }
 
+        if (configSection.contains("custom-model-data")) {
+            if (itemMeta != null) {
+                itemMeta.setCustomModelData(configSection.getInt("custom-model-data"));
+            }
+        }
+
         inviteItem.setItemMeta(itemMeta);
         return inviteItem;
     }
+
 }
