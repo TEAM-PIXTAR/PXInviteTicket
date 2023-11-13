@@ -69,7 +69,7 @@ public class InvitedValid {
     }
 
     public boolean isInvitedPlayer(String invitedPlayerName) {
-        return getInvites().containsKey(invitedPlayerName);
+        return getInvites().containsValue(invitedPlayerName);
     }
 
     public Map<String, String> getInvites() {

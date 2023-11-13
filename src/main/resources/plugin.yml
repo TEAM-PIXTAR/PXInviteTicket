@@ -6,6 +6,10 @@ config: config.yml
 commands:
   초대:
     description: 초대권 시스템
+  invite:
+    description: 초대권 시스템 영어
+  it:
+    description: 초대권 시스템 영어 축약
 permissions:
   px.inviteticket.reload:
     default: op

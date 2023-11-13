@@ -51,30 +51,58 @@ public class InviteTicketCommand implements CommandExecutor {
             return true;
         }
 
-        try {
-            switch (args[0].toLowerCase()) {
-                case "리로드":
-                    handleReloadCommand(player);
-                    break;
-                case "등록":
-                    handleRegisterCommand(player, args);
-                    break;
-                case "목록":
-                    handleListCommand(player);
-                    break;
-                case "초대권등록":
-                    handleRegisterInviteItemCommand(player);
-                    break;
-                case "초대권지급":
-                    handleGiveInviteCommand(player, args);
-                    break;
-                default:
-                    player.sendMessage(Message.getInstance().getMessage(MessageKey.WRONG_COMMAND));
-                    break;
+        if (label.equalsIgnoreCase("초대")) {
+            try {
+                switch (args[0].toLowerCase()) {
+                    case "리로드":
+                        handleReloadCommand(player);
+                        break;
+                    case "등록":
+                        handleRegisterCommand(player, args);
+                        break;
+                    case "목록":
+                        handleListCommand(player);
+                        break;
+                    case "초대권등록":
+                        handleRegisterInviteItemCommand(player);
+                        break;
+                    case "초대권지급":
+                        handleGiveInviteCommand(player, args);
+                        break;
+                    default:
+                        player.sendMessage(Message.getInstance().getMessage(MessageKey.WRONG_COMMAND));
+                        break;
+                }
+            } catch (SQLException e) {
+                player.sendMessage(Message.getInstance().getMessage(MessageKey.SQL_ERROR));
+                plugin.getLogger().log(Level.SEVERE, "An SQL exception occurred.", e);
             }
-        } catch (SQLException e) {
-            player.sendMessage(Message.getInstance().getMessage(MessageKey.SQL_ERROR));
-            plugin.getLogger().log(Level.SEVERE, "An SQL exception occurred.", e);
+        } else if (label.equalsIgnoreCase("invite") || label.equalsIgnoreCase("it")) {
+            try {
+                switch (args[0].toLowerCase()) {
+                    case "reload":
+                        handleReloadCommand(player);
+                        break;
+                    case "add":
+                        handleRegisterCommand(player, args);
+                        break;
+                    case "list":
+                        handleListCommand(player);
+                        break;
+                    case "setitem":
+                        handleRegisterInviteItemCommand(player);
+                        break;
+                    case "giveitem":
+                        handleGiveInviteCommand(player, args);
+                        break;
+                    default:
+                        player.sendMessage(Message.getInstance().getMessage(MessageKey.WRONG_COMMAND));
+                        break;
+                }
+            } catch (SQLException e) {
+                player.sendMessage(Message.getInstance().getMessage(MessageKey.SQL_ERROR));
+                plugin.getLogger().log(Level.SEVERE, "An SQL exception occurred.", e);
+            }
         }
 
         return true;

@@ -12,6 +12,7 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public final class PXInviteTicket extends JavaPlugin {
@@ -49,6 +50,7 @@ public final class PXInviteTicket extends JavaPlugin {
     private void setExecutor() {
         instance = this;
         PluginCommand returnTicketCmd = getCommand("초대");
+        returnTicketCmd.setAliases(Arrays.asList("invite", "it"));
         this.invitedValid = new InvitedValid(dataFile);
         Objects.requireNonNull(returnTicketCmd).setExecutor(new InviteTicketCommand(this, this.invitedValid));
         returnTicketCmd.setTabCompleter(new InviteTicketTab());

@@ -1,10 +1,8 @@
 package com.github.luriel0228.pxinviteticket.command.tabcomplete;
 
-import com.github.luriel0228.pxinviteticket.valid.PermissionValid;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,13 +18,26 @@ public class InviteTicketTab implements TabCompleter {
         List<String> completions = new ArrayList<>();
 
         if (args.length == 1 && label.equalsIgnoreCase("초대")) {
-            if (PermissionValid.hasPermission((Player) sender, "리로드")) {
+            if (sender.hasPermission("px.inviteticket.reload")) {
                 completions.add("리로드");
             }
-            if (PermissionValid.hasPermission((Player) sender, "admin")) {
+
+            if (sender.hasPermission("px.inviteticket.admin")) {
                 completions.addAll(Arrays.asList("초대권등록", "초대권지급"));
             }
+
             completions.addAll(Arrays.asList("등록", "목록"));
+
+        } else if ((args.length == 1 && label.equalsIgnoreCase("invite")) || (args.length == 1 && label.equalsIgnoreCase("it"))) {
+            if (sender.hasPermission("px.inviteticket.reload")) {
+                completions.add("reload");
+            }
+
+            if (sender.hasPermission("px.inviteticket.admin")) {
+                completions.addAll(Arrays.asList("setitem", "giveitem"));
+            }
+
+            completions.addAll(Arrays.asList("add", "list"));
         }
 
         return StringUtil.copyPartialMatches(args[0], completions, new ArrayList<>());
