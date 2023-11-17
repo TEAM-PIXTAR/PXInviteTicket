@@ -32,7 +32,7 @@ public final class PXInviteTicket extends JavaPlugin {
         /*--------------- CONFIG ---------------*/
         config = getConfig();
         saveDefaultConfig();
-        dataFile = new DataFile("PXInviteTicket.db");
+        dataFile = new DataFile("PXInviteTicket.db", "plugins/PXInviteTicket");
         MessageConfig.setup();
         File settingFile = new File(getDataFolder(), "setting.yml");
         if (!settingFile.exists()) {
