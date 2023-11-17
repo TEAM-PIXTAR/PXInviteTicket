@@ -2,6 +2,7 @@ package com.github.luriel0228.pxinviteticket;
 
 import com.github.luriel0228.pxinviteticket.command.InviteTicketCommand;
 import com.github.luriel0228.pxinviteticket.command.tabcomplete.InviteTicketTab;
+import com.github.luriel0228.pxinviteticket.listeners.InviteTicketListener;
 import com.github.luriel0228.pxinviteticket.listeners.PlayerJoinListener;
 import com.github.luriel0228.pxinviteticket.message.MessageConfig;
 import com.github.luriel0228.pxinviteticket.file.DataFile;
@@ -58,6 +59,7 @@ public final class PXInviteTicket extends JavaPlugin {
 
     public void registerEvent(FileConfiguration config) {
         this.config = config;
+        getServer().getPluginManager().registerEvents(new InviteTicketListener(this, invitedValid), this);
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(invitedValid, config), this);
     }
 }

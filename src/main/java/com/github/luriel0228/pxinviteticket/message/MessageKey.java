@@ -23,6 +23,8 @@ public enum MessageKey {
     INVALID_PLAYER("error.invalid_player"),
 
     /* --------------- MAIN ---------------*/
+    GET_INVITE("main.get_invite"),
+    CANCEL_INVITE("main.cancel_invite"),
     SET_INVITE_SUCCESS("main.invite_success"),
     INVITED_PLAYER("main.invited_player"),
     INVITE_ITEM_REGISTERED("main.invite_item_registered"),

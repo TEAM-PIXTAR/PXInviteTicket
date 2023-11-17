@@ -217,7 +217,7 @@ public class InviteTicketCommand implements CommandExecutor {
     }
 
 
-    private ItemStack getInviteItem() {
+    public ItemStack getInviteItem() {
         return loadCustomInviteItem();
     }
 
@@ -297,7 +297,7 @@ public class InviteTicketCommand implements CommandExecutor {
         return inviteItemSection;
     }
 
-    private ItemStack loadCustomInviteItem() {
+    public ItemStack loadCustomInviteItem() {
         ConfigurationSection configSection = getSettingSection();
         Material material = Material.matchMaterial(configSection.getString("material", "PAPER"));
 
