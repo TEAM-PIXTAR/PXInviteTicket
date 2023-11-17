@@ -59,7 +59,6 @@ public class InviteTicketListener implements Listener {
                     handleInvite(player, invitedPlayerName);
                 } else if (itemName.equals("아니요")) {
                     player.sendMessage(Message.getInstance().getMessage(MessageKey.CANCEL_INVITE));
-//                    handleInviteCancel(player);
                 }
             }
 
@@ -82,7 +81,7 @@ public class InviteTicketListener implements Listener {
 
             inviteConfirmationMap.put(player, invitedPlayerName);
 
-            openConfirmationGUI(player);
+            Bukkit.getScheduler().runTask(plugin, () -> openConfirmationGUI(player));
         }
     }
 
@@ -91,14 +90,6 @@ public class InviteTicketListener implements Listener {
         player.sendMessage(Message.getInstance().getMessage(MessageKey.GET_INVITE));
 
         inviteConfirmationMap.put(player, "");
-    }
-
-    private void handleInviteCancel(Player player) {
-        // 초대 취소 시 초대권을 제거
-        ItemStack inviteItem = getInviteItem();
-        if (player.getInventory().containsAtLeast(inviteItem, 1)) {
-            player.getInventory().removeItem(inviteItem);
-        }
     }
 
     private void handleInvite(Player inviter, String invitedPlayerName) {
