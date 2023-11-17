@@ -32,7 +32,7 @@ public class PlayerJoinListener implements Listener {
             return;
         }
 
-        if (!invitedValid.isInvitedPlayer(playerName)) {
+        if (!invitedValid.isInvitedPlayer(playerName.toLowerCase())) {
             kickPlayer(event, config.getString("InviteSetting.kick_message"));
         }
     }

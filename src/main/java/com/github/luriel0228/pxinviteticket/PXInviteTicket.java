@@ -11,8 +11,10 @@ import com.github.luriel0228.pxinviteticket.valid.InvitedValid;
 import lombok.Getter;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -32,7 +34,10 @@ public final class PXInviteTicket extends JavaPlugin {
         saveDefaultConfig();
         dataFile = new DataFile("PXInviteTicket.db");
         MessageConfig.setup();
-
+        File settingFile = new File(getDataFolder(), "setting.yml");
+        if (!settingFile.exists()) {
+            saveResource("setting.yml", false);
+        }
         /* --------------- COMMAND ---------------*/
         if (config != null && config.getBoolean("InviteTicket.EnablePlugin")) {
             setExecutor();

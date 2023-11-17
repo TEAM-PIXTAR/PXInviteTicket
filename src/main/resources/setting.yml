@@ -1,6 +1,5 @@
 InviteSetting:
   InviteItem:
     material: PAPER
-    name: '초대권'
-    lore:
-      - ''
+    name: 초대권
+    custom-model-data: 1

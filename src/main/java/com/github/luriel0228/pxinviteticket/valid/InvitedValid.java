@@ -37,7 +37,7 @@ public class InvitedValid {
 
     public void updateInviteCount(String inviter) {
         try {
-            if (playerDataExists(inviter)) {
+            if (playerCount(inviter)) {
                 executeUpdateQuery(UPDATE_INVITE_COUNT_QUERY, inviter);
             } else {
                 executeUpdateQuery("INSERT INTO invite_counts (inviter, invited_count) VALUES (?, 1)", inviter);
@@ -56,7 +56,23 @@ public class InvitedValid {
         }
     }
 
+    public boolean isInvitedPlayer(String invitedPlayerName) {
+        return playerDataExists(invitedPlayerName);
+    }
+
     private boolean playerDataExists(String playerName) {
+        try {
+            String query = "SELECT COUNT(*) FROM invites WHERE invited = ?";
+            int count = executeSelectSingleIntQuery(query, playerName);
+
+            return count > 0;
+        } catch (SQLException e) {
+            handleSQLException(e, "플레이어 데이터 존재 여부 확인 중 오류 발생", SELECT_PLAYER_COUNT_QUERY, playerName);
+            return false;
+        }
+    }
+
+    private boolean playerCount(String playerName) {
         try {
             String query = "SELECT COUNT(*) FROM invite_counts WHERE inviter = ?";
             int count = executeSelectSingleIntQuery(query, playerName);
@@ -66,10 +82,6 @@ public class InvitedValid {
             handleSQLException(e, "Error while checking if player data exists", SELECT_PLAYER_COUNT_QUERY, playerName);
             return false;
         }
-    }
-
-    public boolean isInvitedPlayer(String invitedPlayerName) {
-        return getInvites().containsValue(invitedPlayerName);
     }
 
     public Map<String, String> getInvites() {

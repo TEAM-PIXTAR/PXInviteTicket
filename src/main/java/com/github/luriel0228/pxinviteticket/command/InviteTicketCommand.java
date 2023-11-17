@@ -1,6 +1,7 @@
 package com.github.luriel0228.pxinviteticket.command;
 
 import com.github.luriel0228.pxinviteticket.message.Message;
+import com.github.luriel0228.pxinviteticket.message.MessageConfig;
 import com.github.luriel0228.pxinviteticket.message.MessageKey;
 import com.github.luriel0228.pxinviteticket.valid.InvitedValid;
 import com.github.luriel0228.pxinviteticket.valid.PermissionValid;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 
 public class InviteTicketCommand implements CommandExecutor {
@@ -111,6 +113,8 @@ public class InviteTicketCommand implements CommandExecutor {
     private void handleReloadCommand(Player player) {
         if (PermissionValid.hasPermission(player, "reload")) {
             plugin.reloadConfig();
+
+            MessageConfig.reload();
             player.sendMessage(Message.getInstance().getMessage(MessageKey.RELOAD_CONFIG));
         }
     }
@@ -135,7 +139,7 @@ public class InviteTicketCommand implements CommandExecutor {
                 return;
             }
 
-            if (invitedValid.isInvitedPlayer(invitedPlayerName)) {
+            if (invitedValid.isInvitedPlayer(invitedPlayerName.toLowerCase())) {
                 String message = Message.getInstance().getMessage(MessageKey.ALREADY_INVITED);
                 String formattedMessage = message.replace("{player}", invitedPlayerName);
                 player.sendMessage(formattedMessage);
@@ -182,15 +186,19 @@ public class InviteTicketCommand implements CommandExecutor {
         configSection.set("material", inviteItem.getType().name());
 
         ItemMeta itemMeta = inviteItem.getItemMeta();
-        if (itemMeta != null && itemMeta.hasDisplayName()) {
-            configSection.set("name", itemMeta.getDisplayName());
-        }
+        if (itemMeta != null) {
+            if (itemMeta.hasDisplayName()) {
+                configSection.set("name", itemMeta.getDisplayName());
+            }
 
-        if (itemMeta != null && itemMeta.hasLore()) {
-            configSection.set("lore", itemMeta.getLore());
-        }
+            if (itemMeta.hasLore()) {
+                configSection.set("lore", itemMeta.getLore());
+            }
 
-        configSection.set("custom-model-data", itemMeta.getCustomModelData());
+            if (itemMeta.hasCustomModelData()) {
+                configSection.set("custom-model-data", itemMeta.getCustomModelData());
+            }
+        }
 
         saveSettingConfig();
     }
@@ -211,11 +219,12 @@ public class InviteTicketCommand implements CommandExecutor {
             configSection.set("lore", itemMeta.getLore());
         }
 
-        configSection.set("custom-model-data", itemMeta.getCustomModelData());
+        if (itemMeta != null && itemMeta.hasCustomModelData()) {
+            configSection.set("custom-model-data", itemMeta.getCustomModelData());
+        }
 
         saveSettingConfig();
     }
-
 
     public ItemStack getInviteItem() {
         return loadCustomInviteItem();

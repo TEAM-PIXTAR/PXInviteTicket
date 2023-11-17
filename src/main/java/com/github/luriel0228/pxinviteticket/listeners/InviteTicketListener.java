@@ -59,7 +59,7 @@ public class InviteTicketListener implements Listener {
                     handleInvite(player, invitedPlayerName);
                 } else if (itemName.equals("아니요")) {
                     player.sendMessage(Message.getInstance().getMessage(MessageKey.CANCEL_INVITE));
-                    handleInviteCancel(player);
+//                    handleInviteCancel(player);
                 }
             }
 
